@@ -1,1 +1,570 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dookandaar App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Poppins:wght@400;600;700&display=swap');
+@font-face{font-family:'Jameel';src:url('JameelNooriNastaleeq.ttf')format('truetype')}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#f0f2f7;color:#333;font-family:'Jameel','Noto Nastaliq Urdu',serif;direction:rtl;line-height:1.7;overflow-x:hidden;transition:all 0.3s}
+body.lang-en{font-family:'Poppins',sans-serif;direction:ltr;line-height:1.5}
+.hidden{display:none!important}
+.auth-screen{min-height:100vh;background:linear-gradient(135deg,#e11d48,#881337);display:flex;flex-direction:column;padding:40px 20px 20px;position:relative;overflow:hidden}
+.auth-logo{text-align:center;margin-bottom:25px;position:relative;z-index:2}
+.logo-circle{width:75px;height:75px;background:white;border-radius:22px;display:inline-flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 15px 40px rgba(0,0,0,0.3);margin-bottom:12px}
+.auth-logo h1{color:white;font-size:1.7rem;margin:0}
+.auth-logo p{color:rgba(255,255,255,0.8);font-size:0.9rem}
+.auth-card{background:white;border-radius:28px;padding:25px;box-shadow:0 25px 60px rgba(0,0,0,0.3);position:relative;z-index:2}
+.auth-tabs{display:flex;gap:5px;background:#f1f5f9;padding:5px;border-radius:16px;margin-bottom:22px}
+.auth-tab{flex:1;padding:12px;background:transparent;border:none;border-radius:12px;font-family:inherit;font-size:1rem;font-weight:bold;cursor:pointer;color:#94a3b8}
+.auth-tab.active{background:linear-gradient(135deg,#e11d48,#be123c);color:white;box-shadow:0 6px 15px rgba(225,29,72,0.35)}
+.auth-form{display:none;flex-direction:column}
+.auth-form.active{display:flex}
+.input-field{position:relative;margin-bottom:14px}
+.input-field input{width:100%;padding:15px;border:2px solid #e2e8f0;border-radius:15px;font-size:1.05rem;font-family:inherit;outline:none;background:#f8fafc}
+.input-field input:focus{border-color:#e11d48;background:white}
+.pwd-wrap{position:relative}
+.pwd-wrap input{padding-left:48px}
+.eye-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1.2rem;user-select:none}
+body.lang-en .pwd-wrap input{padding-left:15px;padding-right:48px}
+body.lang-en .eye-icon{left:auto;right:15px}
+.security-box{background:#f8fafc;padding:14px;border-radius:15px;margin-bottom:14px;border:2px dashed #cbd5e1}
+.security-box select,.security-box input{width:100%;padding:12px;margin-bottom:8px;border:2px solid #e2e8f0;border-radius:10px;font-family:inherit;outline:none}
+.btn-auth{width:100%;padding:16px;border-radius:15px;border:none;font-family:inherit;font-size:1.1rem;font-weight:bold;cursor:pointer;background:linear-gradient(135deg,#e11d48,#be123c);color:white;box-shadow:0 10px 25px rgba(225,29,72,0.35);margin-top:5px}
+.forgot-link{background:none;border:none;color:#64748b;font-family:inherit;font-size:0.9rem;cursor:pointer;margin-top:14px;text-align:center;display:block;width:100%}
+.lang-toggle-btn{position:absolute;top:15px;left:15px;background:rgba(255,255,255,0.2);color:white;border:1.5px solid white;padding:6px 14px;border-radius:20px;font-family:inherit;font-weight:bold;cursor:pointer;font-size:0.9rem;z-index:10}
+body.lang-en .lang-toggle-btn{left:auto;right:15px}
+.full-screen{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#e11d48,#881337)}
+.card{background:white;padding:30px 22px;border-radius:28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.card h2{color:#e11d48;font-size:2rem;margin-bottom:15px;text-align:center}
+.card input{width:100%;padding:14px;margin-bottom:14px;border:2px solid #e2e8f0;border-radius:14px;font-size:1.05rem;font-family:inherit;outline:none;background:#f8fafc}
+.btn{width:100%;padding:15px;border-radius:14px;border:none;font-size:1.1rem;font-family:inherit;cursor:pointer;margin-bottom:10px;font-weight:bold;background:linear-gradient(135deg,#e11d48,#be123c);color:white}
+.btn-secondary{background:#f1f5f9;color:#e11d48;border:2px solid #e11d48}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2000;justify-content:center;align-items:center;padding:20px}
+.modal-box{background:white;padding:25px;border-radius:25px;width:100%;max-width:400px;text-align:center}
+.pay-opt{border:2px solid #e2e8f0;padding:15px;border-radius:15px;cursor:pointer;text-align:center;font-weight:bold;margin:5px 0}/* ===== MODERN DIGITAL DASHBOARD ===== */
+.app-header{background:linear-gradient(135deg,#e11d48 0%,#be123c 50%,#881337 100%);color:white;padding:20px 22px 80px;border-bottom-left-radius:32px;border-bottom-right-radius:32px;box-shadow:0 15px 40px rgba(225,29,72,0.35);position:relative;overflow:hidden}
+.app-header::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,255,255,0.15),transparent 70%);border-radius:50%}
+.app-header::after{content:'';position:absolute;bottom:-30px;left:-30px;width:150px;height:150px;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);border-radius:50%}
+.header-top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.greeting h2{font-size:1.4rem;margin-top:-5px;font-weight:bold}
+.greeting .sub{font-size:0.85rem;opacity:0.9}
+.avatar-circle{width:48px;height:48px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:2px solid rgba(255,255,255,0.4);cursor:pointer;backdrop-filter:blur(10px)}
+.app-content{padding:0 18px 100px;margin-top:-65px;position:relative;z-index:3}
+.view{display:none;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#view-home{display:block}
 
+/* Modern Balance Hero */
+.balance-hero{background:linear-gradient(135deg,#ffffff 0%,#fef2f4 100%);border-radius:24px;padding:24px;box-shadow:0 12px 35px rgba(0,0,0,0.08);margin-bottom:15px;position:relative;overflow:hidden;border:1px solid rgba(225,29,72,0.1)}
+.balance-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(225,29,72,0.1),transparent 70%);border-radius:50%}
+.balance-hero .label{font-size:0.9rem;color:#64748b;display:flex;align-items:center;gap:6px}
+.balance-hero .amount{font-size:2.4rem;color:#e11d48;font-weight:bold;margin:6px 0 4px;letter-spacing:-0.5px;line-height:1.1}
+.balance-hero .sub{font-size:0.8rem;color:#94a3b8}
+
+/* Stat Cards */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.stat-mini{background:white;padding:16px;border-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,0.06);text-align:center;position:relative;overflow:hidden;border:1px solid rgba(0,0,0,0.04)}
+.stat-mini.green::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle,rgba(16,185,129,0.15),transparent 70%);border-radius:50%}
+.stat-mini.red::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle,rgba(225,29,72,0.15),transparent 70%);border-radius:50%}
+.stat-mini .icon{font-size:1.4rem;margin-bottom:3px}
+.stat-mini p{font-size:0.78rem;color:#64748b;margin:0}
+.stat-mini h3{font-size:1.15rem;margin-top:3px;font-weight:bold}
+.val-green{color:#059669}.val-red{color:#dc2626}
+
+/* Quick Actions Grid - Modern */
+.quick-actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:25px}
+.qa-btn{background:white;padding:16px 8px;border-radius:20px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:none;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,0.06);transition:all 0.2s;border:1px solid rgba(0,0,0,0.04);position:relative;overflow:hidden}
+.qa-btn:active{transform:scale(0.96)}
+.qa-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(225,29,72,0.05),transparent);opacity:0;transition:opacity 0.2s}
+.qa-btn:active::before{opacity:1}
+.qa-icon{font-size:1.6rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))}
+.qa-btn span:last-child{font-size:0.75rem;color:#475569;font-weight:bold}
+
+/* Section Headers */
+.section-title{font-size:1.2rem;margin-bottom:15px;color:#1e293b;font-weight:bold;display:flex;align-items:center;gap:8px}
+
+/* Transaction Cards */
+.transaction-item,.inventory-item{background:white;padding:15px;border-radius:20px;margin-bottom:10px;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.03);transition:transform 0.2s}
+.t-header{display:flex;justify-content:space-between;align-items:center}
+.t-info{display:flex;align-items:center;gap:12px;flex:1}
+.t-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:bold;color:white;box-shadow:0 4px 10px rgba(0,0,0,0.15)}
+.avatar-red{background:linear-gradient(135deg,#f43f5e,#e11d48)}
+.avatar-green{background:linear-gradient(135deg,#10b981,#059669)}
+.t-info h4{font-size:1rem;color:#1e293b;font-weight:bold}
+.t-info p{font-size:0.75rem;color:#94a3b8}
+.t-amount{font-weight:bold;font-size:1.05rem}
+.amount-red{color:#e11d48}.amount-green{color:#059669}
+.item-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.btn-edit{background:#fef3c7;color:#d97706;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:bold}
+.btn-delete{background:#fee2e2;color:#dc2626;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:bold}
+.t-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+.btn-small{padding:7px 14px;border-radius:10px;border:none;font-size:0.82rem;cursor:pointer;font-family:inherit;font-weight:bold}
+.btn-wa{background:#25D366;color:white}
+.btn-pay{background:#3b82f6;color:white}
+
+.form-group{margin-bottom:15px}
+.form-group label{display:block;margin-bottom:6px;font-size:0.95rem;color:#475569;font-weight:bold}
+.form-control{width:100%;padding:13px;border:2px solid #e2e8f0;border-radius:14px;font-size:1.05rem;font-family:inherit;outline:none;background:#f8fafc}
+.form-control:focus{border-color:#e11d48;background:white}
+
+/* Modern Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;width:100%;background:white;display:flex;justify-content:space-around;padding:10px 0 12px;box-shadow:0 -8px 30px rgba(0,0,0,0.1);border-top-left-radius:28px;border-top-right-radius:28px;z-index:1000}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#94a3b8;font-size:0.7rem;cursor:pointer;background:none;border:none;width:20%;font-family:inherit;padding:5px 0;transition:all 0.2s;border-radius:12px}
+.nav-item span.icon{font-size:1.35rem;transition:transform 0.2s}
+.nav-item.active{color:#e11d48;background:rgba(225,29,72,0.08)}
+.nav-item.active span.icon{transform:scale(1.15)}
+.nav-item.active span:last-child{font-weight:bold}
+
+.search-bar{width:100%;padding:13px 18px;border-radius:16px;border:2px solid #e2e8f0;font-family:inherit;margin-bottom:15px;outline:none;background:white;font-size:0.95rem}
+.search-bar:focus{border-color:#e11d48;box-shadow:0 0 0 4px rgba(225,29,72,0.08)}
+.empty-state{text-align:center;padding:40px 20px;color:#94a3b8;font-size:0.95rem}
+.photo-preview{width:100%;height:180px;border:2px dashed #cbd5e1;border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#f8fafc;margin-bottom:12px;overflow:hidden}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-preview span{color:#94a3b8;font-size:0.9rem}
+.item-photo{width:60px;height:60px;border-radius:14px;object-fit:cover;margin-left:5px;border:2px solid #e2e8f0}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.report-card{background:white;padding:18px;border-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,0.06);text-align:center;border:1px solid rgba(0,0,0,0.04)}
+.report-card .icon{font-size:1.8rem;margin-bottom:5px}
+.report-card p{font-size:0.85rem;color:#64748b;margin:0}
+.report-card h3{font-size:1.3rem;margin:5px 0 0 0;font-weight:bold}
+.report-card.big{grid-column:span 2;background:linear-gradient(135deg,#e11d48,#be123c);color:white;box-shadow:0 12px 35px rgba(225,29,72,0.35)}
+.report-card.big p{color:#fce7ec}
+.report-card.big h3{color:white;font-size:2rem}
+.month-selector{display:flex;gap:8px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px}
+.month-btn{padding:8px 14px;border-radius:20px;border:2px solid #e2e8f0;background:white;font-family:inherit;font-weight:bold;cursor:pointer;white-space:nowrap;font-size:0.85rem;color:#64748b}
+.month-btn.active{background:#e11d48;color:white;border-color:#e11d48}
+.reminder-item{background:white;padding:15px;border-radius:18px;margin-bottom:10px;box-shadow:0 4px 15px rgba(0,0,0,0.05);border-right:5px solid #ef4444;border:1px solid rgba(0,0,0,0.04)}
+.reminder-item .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.reminder-item .name{font-size:1.05rem;font-weight:bold;color:#1e293b}
+.reminder-item .amount{font-size:1.15rem;font-weight:bold;color:#ef4444}
+.reminder-item .info{font-size:0.82rem;color:#64748b;margin-bottom:10px}
+.reminder-total{background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:22px;border-radius:22px;text-align:center;margin-bottom:15px;box-shadow:0 12px 35px rgba(239,68,68,0.3)}
+.reminder-total p{color:#fecaca;font-size:0.9rem;margin:0}
+.reminder-total h2{color:white;font-size:2rem;margin:5px 0 0 0}
+.print-invoice{background:white;padding:20px;border-radius:15px;margin-bottom:15px;border:2px dashed #cbd5e1}
+.print-invoice h2{text-align:center;color:#e11d48;margin-bottom:5px}
+.print-invoice .shop-info{text-align:center;font-size:0.9rem;color:#64748b;margin-bottom:15px;border-bottom:2px solid #e11d48;padding-bottom:10px}
+.print-invoice .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #e2e8f0}
+.print-invoice .row.total{font-weight:bold;font-size:1.2rem;color:#e11d48;border-top:2px solid #e11d48;border-bottom:none;margin-top:10px;padding-top:10px}
+@media print{body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:absolute;left:0;top:0;width:100%}}
+</style>
+</head><body>
+<button class="lang-toggle-btn" id="global-lang-btn" onclick="toggleLanguage()">EN</button>
+<div id="print-area" class="hidden"></div>
+<div id="payment-modal" class="modal-overlay">
+<div class="modal-box">
+<h3 style="color:#e11d48;margin-bottom:10px" id="lbl-pay-title">💰 ادائیگی کا طریقہ</h3>
+<p style="font-size:1.3rem;font-weight:bold;color:#e11d48;margin-bottom:15px" id="modal-shop-phone">03xx-xxxxxxx</p>
+<div class="pay-opt" onclick="processPayment('Cash')" style="border-color:#10b981;color:#10b981">💵 <span id="lbl-cash">نقد رقم</span></div>
+<div class="pay-opt" onclick="processPayment('JazzCash')" style="border-color:#d32f2f;color:#d32f2f">📱 JazzCash</div>
+<div class="pay-opt" onclick="processPayment('EasyPaisa')" style="border-color:#008000;color:#008000">📲 EasyPaisa</div>
+<div class="pay-opt" onclick="processPayment('Bank')" style="border-color:#3b82f6;color:#3b82f6">🏦 <span id="lbl-bank">بینک ٹرانسفر</span></div>
+<button class="btn btn-secondary" style="margin-top:10px" onclick="closeModal()" id="lbl-cancel">منسوخ کریں</button>
+</div>
+</div>
+<div id="otp-modal" class="modal-overlay">
+<div class="modal-box">
+<h3 style="color:#e11d48;margin-bottom:10px" id="lbl-otp-title">🔐 OTP Verification</h3>
+<p style="font-size:2rem;font-weight:bold;color:#e11d48;letter-spacing:5px;margin:15px 0" id="otp-display">0000</p>
+<input type="number" id="otp-input" class="form-control" placeholder="OTP" style="text-align:center;font-size:1.3rem;letter-spacing:5px">
+<button class="btn" style="margin-top:15px" onclick="verifyOTP()" id="lbl-verify">تصدیق کریں</button>
+<button class="btn btn-secondary" onclick="closeOtpModal()">منسوخ</button>
+</div>
+</div>
+<div id="auth-screen" class="auth-screen">
+<div class="auth-logo"><div class="logo-circle">🏪</div><h1 id="lbl-app-name">دکاندار App</h1><p id="lbl-app-tagline">آپ کے کاروبار کا ساتھی</p></div>
+<div class="auth-card">
+<div class="auth-tabs">
+<button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')"><span id="lbl-login-tab">لاگ ان</span></button>
+<button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')"><span id="lbl-reg-tab">رجسٹر</span></button>
+</div>
+<div id="form-login" class="auth-form active">
+<div class="input-field"><input type="text" id="login-email" placeholder="ای میل"></div>
+<div class="input-field pwd-wrap"><input type="password" id="login-password" placeholder="پاس ورڈ"><span class="eye-icon" onclick="togglePwd('login-password',this)">👁️</span></div>
+<button class="btn-auth" onclick="loginUser()" id="lbl-login-btn">لاگ ان کریں</button>
+<button class="forgot-link" onclick="showForgotPassword()" id="lbl-forgot">پاس ورڈ بھول گئے؟</button>
+</div>
+<div id="form-register" class="auth-form">
+<div class="input-field"><input type="text" id="reg-email" placeholder="ای میل"></div>
+<div class="input-field pwd-wrap"><input type="password" id="reg-password" placeholder="پاس ورڈ"><span class="eye-icon" onclick="togglePwd('reg-password',this)">👁️</span></div>
+<div class="security-box">
+<label style="font-size:0.85rem;color:#475569" id="lbl-sec-q">🔒 سیکیورٹی سوال</label>
+<select id="reg-security-q"><option value="والد کا نام؟">والد کا نام؟</option><option value="اسکول کا نام؟">اسکول کا نام؟</option><option value="استاد کا نام؟">استاد کا نام؟</option></select>
+<input type="text" id="reg-security-a" placeholder="جواب">
+</div>
+<button class="btn-auth" onclick="signupUser()" id="lbl-signup-btn">اکاؤنٹ بنائیں</button>
+</div>
+</div>
+<div style="text-align:center;margin-top:15px;position:relative;z-index:2">
+<button class="forgot-link" style="color:rgba(255,255,255,0.7)" onclick="resetApp()" id="lbl-reset">🔄 ایپ ری سیٹ کریں</button>
+</div>
+</div><div id="forgot-password-screen" class="full-screen hidden">
+<div class="card">
+<h2 id="lbl-reset-title">پاس ورڈ ری سیٹ</h2>
+<div id="fp-step1"><input type="text" id="fp-email" placeholder="ای میل"><button class="btn" onclick="checkFpEmail()">آگے بڑھیں</button></div>
+<div id="fp-step2" class="hidden"><p id="fp-question-display" style="color:#e11d48;font-weight:bold;margin-bottom:10px"></p><input type="text" id="fp-answer" placeholder="جواب"><button class="btn" onclick="checkFpAnswer()">تصدیق</button></div>
+<div id="fp-step3" class="hidden"><input type="password" id="fp-new-password" placeholder="نیا پاس ورڈ"><button class="btn" onclick="saveNewPassword()">محفوظ کریں</button></div>
+<button class="btn btn-secondary" onclick="backToLogin()" id="lbl-back">← واپس</button>
+</div>
+</div>
+<div id="shop-setup-screen" class="full-screen hidden">
+<div class="card">
+<h2 id="lbl-shop-title">دکان کی معلومات</h2>
+<input type="text" id="shop-name" placeholder="دکان کا نام">
+<input type="text" id="shop-address" placeholder="دکان کا پتہ">
+<input type="tel" id="shop-phone" placeholder="فون نمبر">
+<button class="btn" onclick="saveShopDetails()" id="lbl-save-shop">محفوظ کریں</button>
+</div>
+</div>
+<div id="main-app" class="hidden">
+<header class="app-header">
+<div class="header-top">
+<div class="greeting">
+<div class="sub" id="lbl-welcome">خوش آمدید 👋</div>
+<h2 id="header-shop-name">دکاندار App</h2>
+</div>
+<div class="avatar-circle" onclick="switchTab('settings')">🏪</div>
+</div>
+</header>
+<main class="app-content">
+<div id="view-home" class="view">
+<div class="balance-hero">
+<div class="label" id="lbl-balance-title">💰 کل بیلنس</div>
+<div class="amount" id="net-balance-display">Rs. 0</div>
+<div class="sub" id="lbl-balance-sub">آپ کا موجودہ خالص بیلنس</div>
+</div>
+<div class="stat-row">
+<div class="stat-mini green"><div class="icon">📥</div><p id="lbl-recv">کل وصولیاں (Lena)</p><h3 class="val-green" id="receivable-display">Rs. 0</h3></div>
+<div class="stat-mini red"><div class="icon">📤</div><p id="lbl-pay">کل ادائیگیاں (Dena)</p><h3 class="val-red" id="payable-display">Rs. 0</h3></div>
+</div>
+<div class="quick-actions-grid">
+<button class="qa-btn" onclick="switchTab('new-bill')"><span class="qa-icon">🧾</span><span id="lbl-qa-bill">نیا بل</span></button>
+<button class="qa-btn" onclick="switchTab('inventory')"><span class="qa-icon">📦</span><span id="lbl-qa-inv">اسٹاک</span></button>
+<button class="qa-btn" onclick="switchTab('parties')"><span class="qa-icon">👥</span><span id="lbl-qa-parties">پارٹیاں</span></button>
+<button class="qa-btn" onclick="switchTab('expenses')"><span class="qa-icon">💸</span><span id="lbl-qa-exp">اخراجات</span></button>
+<button class="qa-btn" onclick="switchTab('report')"><span class="qa-icon">📊</span><span id="lbl-qa-rep">رپورٹ</span></button>
+<button class="qa-btn" onclick="switchTab('reminder')"><span class="qa-icon">🔔</span><span id="lbl-qa-rem">یاد دہانی</span></button>
+</div>
+<h3 class="section-title" id="lbl-recent-title">📋 <span id="lbl-recent-txt">حالیہ لین دین</span></h3>
+<input type="text" id="home-search" class="search-bar" placeholder="🔍 تلاش کریں" onkeyup="loadTransactions()">
+<div id="transaction-list"></div>
+</div>
+<div id="view-new-bill" class="view">
+<h3 class="section-title" id="lbl-bill-title">🧾 نیا بل</h3>
+<div class="form-group"><label id="lbl-item-lbl">آئٹم</label><select id="bill-item-select" class="form-control" onchange="fillAmountFromItem()"><option value="">-- آئٹم --</option></select></div>
+<div class="form-group"><label id="lbl-qty-lbl">تعداد / وزن</label><input type="number" id="bill-quantity" class="form-control" value="1" min="0.01" step="0.01" oninput="updateBillAmount()"></div>
+<div class="form-group"><label id="lbl-cust-lbl">گاہک کا نام</label><input type="text" id="bill-customer" class="form-control"></div>
+<div class="form-group"><label id="lbl-phone-lbl">فون نمبر</label><input type="tel" id="bill-phone" class="form-control" placeholder="03001234567"></div>
+<div class="form-group"><label id="lbl-amt-lbl">کل رقم</label><input type="number" id="bill-amount" class="form-control" readonly></div>
+<div class="form-group"><label id="lbl-type-lbl">قسم</label><select id="bill-type" class="form-control"><option value="gave" id="opt-gave">آپ نے دیا (ادھار)</option><option value="got" id="opt-got">آپ کو ملے (وصولی)</option></select></div>
+<button class="btn" onclick="saveBill()" id="lbl-save-bill">بل محفوظ کریں</button>
+</div><div id="view-inventory" class="view">
+<h3 class="section-title" id="lbl-inv-title">📦 اسٹاک</h3>
+<button class="btn" style="margin-bottom:15px" onclick="resetItemForm();switchTab('add-item')" id="lbl-add-new">+ نیا آئٹم</button>
+<input type="text" id="inventory-search" class="search-bar" placeholder="🔍 تلاش" onkeyup="loadInventory()">
+<div id="inventory-list"></div>
+</div>
+<div id="view-add-item" class="view">
+<h3 class="section-title" id="add-item-title">نیا آئٹم</h3>
+<input type="hidden" id="edit-item-id">
+<div class="form-group"><label id="lbl-photo-lbl">تصویر (اختیاری)</label>
+<div class="photo-preview" onclick="document.getElementById('item-photo-input').click()" id="photo-preview-box"><span id="lbl-photo-add">📷 تصویر شامل کریں</span></div>
+<input type="file" id="item-photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+</div>
+<div class="form-group"><label id="lbl-name-lbl">نام</label><input type="text" id="item-name" class="form-control"></div>
+<div class="form-group"><label id="lbl-unit-lbl">یونٹ</label><select id="item-unit" class="form-control"><option value="پیکٹ">پیکٹ</option><option value="کلو">کلو</option><option value="گرام">گرام</option><option value="عدد">عدد</option><option value="لیٹر">لیٹر</option><option value="درجن">درجن</option><option value="میٹر">میٹر</option><option value="بوری">بوری</option><option value="کارٹن">کارٹن</option></select></div>
+<div class="form-group"><label id="lbl-pp-lbl">خریداری قیمت</label><input type="number" id="item-purchase-price" class="form-control" step="0.01"></div>
+<div class="form-group"><label id="lbl-sp-lbl">فروخت قیمت</label><input type="number" id="item-price" class="form-control" step="0.01"></div>
+<div class="form-group"><label id="lbl-stock-lbl">اسٹاک</label><input type="number" id="item-stock" class="form-control" step="0.01"></div>
+<div class="form-group"><label id="lbl-low-lbl">کم اسٹاک الرٹ</label><input type="number" id="item-low-stock" class="form-control" value="5"></div>
+<button class="btn" id="btn-save-item" onclick="saveItem()">محفوظ</button>
+<button class="btn btn-secondary" onclick="switchTab('inventory')" id="lbl-cancel-item">منسوخ</button>
+</div>
+<div id="view-parties" class="view">
+<h3 class="section-title" id="lbl-parties-title">👥 پارٹیاں</h3>
+<div id="parties-list"></div>
+</div>
+<div id="view-ledger" class="view">
+<button class="btn-small" style="margin-bottom:15px;background:#f1f5f9;color:#334155" onclick="switchTab('parties')" id="lbl-ledger-back">← واپس</button>
+<div style="background:white;padding:20px;border-radius:18px;margin-bottom:15px;text-align:center">
+<p style="color:#64748b" id="lbl-ledger-total">کل بیلنس</p>
+<h3 id="ledger-total" style="color:#e11d48;font-size:1.8rem">Rs. 0</h3>
+</div>
+<div id="ledger-list"></div>
+</div><div id="view-report" class="view">
+<h3 class="section-title" id="lbl-rep-title">📊 کاروبار کی رپورٹ</h3>
+<div class="month-selector" id="month-selector"></div>
+<div class="report-grid" id="report-content"></div>
+</div>
+<div id="view-reminder" class="view">
+<h3 class="section-title" id="lbl-rem-title">🔔 ادھار یاد دہانی</h3>
+<div class="reminder-total"><p id="lbl-rem-pend">کل وصولی باقی</p><h2 id="reminder-total-amount">Rs. 0</h2></div>
+<p style="color:#64748b;font-size:0.9rem;margin-bottom:15px" id="lbl-rem-info">یہ گاہک آپ سے ادھار لینے والے ہیں</p>
+<div id="reminder-list"></div>
+</div>
+<div id="view-expenses" class="view">
+<h3 class="section-title" id="lbl-exp-title">💸 اخراجات</h3>
+<input type="text" id="expense-desc" class="form-control" placeholder="تفصیل" style="margin-bottom:10px">
+<input type="number" id="expense-amount" class="form-control" placeholder="رقم" style="margin-bottom:10px">
+<button class="btn" onclick="saveExpense()" id="lbl-save-exp">محفوظ</button>
+<div id="expenses-list" style="margin-top:20px"></div>
+</div>
+<div id="view-settings" class="view">
+<h3 class="section-title" id="lbl-set-title">⚙️ سیٹنگز</h3>
+<div class="form-group"><label id="lbl-set-name">دکان کا نام</label><input type="text" id="settings-shop-name" class="form-control"></div>
+<div class="form-group"><label id="lbl-set-addr">دکان کا پتہ</label><input type="text" id="settings-shop-address" class="form-control"></div>
+<div class="form-group"><label id="lbl-set-phone">دکان کا فون</label><input type="tel" id="settings-shop-phone" class="form-control"></div>
+<button class="btn" onclick="updateShopDetails()" id="lbl-upd-shop">اپ ڈیٹ</button>
+<hr style="margin:20px 0;border:1px solid #e2e8f0">
+<h3 class="section-title" id="lbl-prem-title">⭐ پریمیم</h3>
+<button class="btn" style="background:linear-gradient(135deg,#3b82f6,#2563eb)" onclick="openPaymentModal()" id="lbl-go-prem">💳 ادائیگی</button>
+<hr style="margin:20px 0;border:1px solid #e2e8f0">
+<p style="color:#64748b;margin-bottom:15px"><span id="lbl-logged-in">لاگ ان:</span> <b id="settings-email"></b></p>
+<button class="btn" style="background:#334155" onclick="logoutUser()" id="lbl-logout">لاگ آؤٹ</button>
+</div>
+</main>
+<nav class="bottom-nav">
+<button class="nav-item active" id="nav-home" onclick="switchTab('home')"><span class="icon">🏠</span><span id="lbl-nav-home">ہوم</span></button>
+<button class="nav-item" id="nav-new-bill" onclick="switchTab('new-bill')"><span class="icon">🧾</span><span id="lbl-nav-bill">بل</span></button>
+<button class="nav-item" id="nav-inventory" onclick="switchTab('inventory')"><span class="icon">📦</span><span id="lbl-nav-inv">اسٹاک</span></button>
+<button class="nav-item" id="nav-parties" onclick="switchTab('parties')"><span class="icon">👥</span><span id="lbl-nav-par">پارٹیاں</span></button>
+<button class="nav-item" id="nav-report" onclick="switchTab('report')"><span class="icon">📊</span><span id="lbl-nav-rep">رپورٹ</span></button>
+</nav>
+</div><script>
+var currentUser=null;
+var shopDetails=JSON.parse(localStorage.getItem('vyaparShop'))||null;
+var transactions=JSON.parse(localStorage.getItem('vyaparTransactions'))||[];
+var items=JSON.parse(localStorage.getItem('vyaparItems'))||[];
+var expenses=JSON.parse(localStorage.getItem('vyaparExpenses'))||[];
+var fpEmailGlobal="";var generatedOTP="";var pendingEmail="";var currentPhotoData="";var selectedMonth="";
+var currentLang=localStorage.getItem('vyaparLang')||'ur';
+
+var T={
+ur:{appName:'دکاندار App',tagline:'آپ کے کاروبار کا ساتھی',login:'لاگ ان',reg:'رجسٹر',email:'ای میل',pwd:'پاس ورڈ',loginBtn:'لاگ ان کریں',signupBtn:'اکاؤنٹ بنائیں',forgot:'پاس ورڈ بھول گئے؟',reset:'🔄 ایپ ری سیٹ کریں',secQ:'🔒 سیکیورٹی سوال',welcome:'خوش آمدید 👋',balance:'💰 کل بیلنس',balanceSub:'آپ کا موجودہ خالص بیلنس',recv:'کل وصولیاں (Lena)',pay:'کل ادائیگیاں (Dena)',recent:'حالیہ لین دین',qaBill:'نیا بل',qaInv:'اسٹاک',qaParties:'پارٹیاں',qaExp:'اخراجات',qaRep:'رپورٹ',qaRem:'یاد دہانی',billTitle:'🧾 نیا بل',item:'آئٹم',qty:'تعداد / وزن',cust:'گاہک کا نام',phone:'فون نمبر',amt:'کل رقم',type:'قسم',typeGave:'آپ نے دیا (ادھار)',typeGot:'آپ کو ملے (وصولی)',saveBill:'بل محفوظ کریں',invTitle:'📦 اسٹاک',addNew:'+ نیا آئٹم',addItemTitle:'نیا آئٹم',photo:'تصویر (اختیاری)',photoAdd:'📷 تصویر شامل کریں',name:'نام',unit:'یونٹ',pp:'خریداری قیمت',sp:'فروخت قیمت',stock:'اسٹاک',low:'کم اسٹاک الرٹ',save:'محفوظ',cancel:'منسوخ',partiesTitle:'👥 پارٹیاں',ledgerBack:'← واپس',ledgerTotal:'کل بیلنس',repTitle:'📊 کاروبار کی رپورٹ',remTitle:'🔔 ادھار یاد دہانی',remPend:'کل وصولی باقی',remInfo:'یہ گاہک آپ سے ادھار لینے والے ہیں',expTitle:'💸 اخراجات',desc:'تفصیل',saveExp:'محفوظ',setTitle:'⚙️ سیٹنگز',setName:'دکان کا نام',setAddr:'دکان کا پتہ',setPhone:'دکان کا فون',updShop:'اپ ڈیٹ',premTitle:'⭐ پریمیم',goPrem:'💳 ادائیگی',loggedIn:'لاگ ان:',logout:'لاگ آؤٹ',navHome:'ہوم',navBill:'بل',navInv:'اسٹاک',navPar:'پارٹیاں',navRep:'رپورٹ',payTitle:'💰 ادائیگی کا طریقہ',cash:'نقد رقم',bank:'بینک ٹرانسفر',cancelBtn:'منسوخ کریں',otpTitle:'🔐 OTP Verification',verify:'تصدیق کریں',shopTitle:'دکان کی معلومات',shopName:'دکان کا نام',shopAddr:'دکان کا پتہ',shopPhone:'فون نمبر',saveShop:'محفوظ کریں',resetTitle:'پاس ورڈ ری سیٹ',back:'← واپس',next:'آگے بڑھیں',answer:'جواب',newPwd:'نیا پاس ورڈ',verifyBtn:'تصدیق'},
+en:{appName:'Dookandaar App',tagline:'Your Business Partner',login:'Login',reg:'Register',email:'Email',pwd:'Password',loginBtn:'Login',signupBtn:'Create Account',forgot:'Forgot Password?',reset:'🔄 Reset App',secQ:'🔒 Security Question',welcome:'Welcome 👋',balance:'💰 Total Balance',balanceSub:'Your current net balance',recv:'Total Receivable',pay:'Total Payable',recent:'Recent Transactions',qaBill:'New Bill',qaInv:'Inventory',qaParties:'Parties',qaExp:'Expenses',qaRep:'Report',qaRem:'Reminder',billTitle:'🧾 New Bill',item:'Item',qty:'Quantity / Weight',cust:'Customer Name',phone:'Phone',amt:'Total Amount',type:'Type',typeGave:'You Gave (Udhaar)',typeGot:'You Got (Payment)',saveBill:'Save Bill',invTitle:'📦 Inventory',addNew:'+ New Item',addItemTitle:'New Item',photo:'Photo (Optional)',photoAdd:'📷 Add Photo',name:'Name',unit:'Unit',pp:'Purchase Price',sp:'Sale Price',stock:'Stock',low:'Low Stock Alert',save:'Save',cancel:'Cancel',partiesTitle:'👥 Parties',ledgerBack:'← Back',ledgerTotal:'Total Balance',repTitle:'📊 Business Report',remTitle:'🔔 Udhaar Reminder',remPend:'Total Pending',remInfo:'These customers owe you money',expTitle:'💸 Expenses',desc:'Description',saveExp:'Save',setTitle:'⚙️ Settings',setName:'Shop Name',setAddr:'Shop Address',setPhone:'Shop Phone',updShop:'Update',premTitle:'⭐ Premium',goPrem:'💳 Payment',loggedIn:'Logged in:',logout:'Logout',navHome:'Home',navBill:'Bill',navInv:'Stock',navPar:'Parties',navRep:'Report',payTitle:'💰 Payment Method',cash:'Cash',bank:'Bank Transfer',cancelBtn:'Cancel',otpTitle:'🔐 OTP Verification',verify:'Verify',shopTitle:'Shop Details',shopName:'Shop Name',shopAddr:'Shop Address',shopPhone:'Phone',saveShop:'Save',resetTitle:'Password Reset',back:'← Back',next:'Next',answer:'Answer',newPwd:'New Password',verifyBtn:'Verify'}};
+
+function t(k){return T[currentLang][k]||k;}
+function toggleLanguage(){currentLang=currentLang==='ur'?'en':'ur';localStorage.setItem('vyaparLang',currentLang);applyLanguage();}
+function applyLanguage(){
+var isUr=currentLang==='ur';
+if(isUr){document.body.className='';document.body.dir='rtl';}else{document.body.className='lang-en';document.body.dir='ltr';}
+document.getElementById('global-lang-btn').innerText=isUr?'EN':'UR';
+document.getElementById('lbl-app-name').innerText=t('appName');
+document.getElementById('lbl-app-tagline').innerText=t('tagline');
+document.getElementById('lbl-login-tab').innerText=t('login');
+document.getElementById('lbl-reg-tab').innerText=t('reg');
+document.getElementById('lbl-login-btn').innerText=t('loginBtn');
+document.getElementById('lbl-signup-btn').innerText=t('signupBtn');
+document.getElementById('lbl-forgot').innerText=t('forgot');
+document.getElementById('lbl-reset').innerText=t('reset');
+document.getElementById('lbl-sec-q').innerText=t('secQ');
+document.getElementById('lbl-welcome').innerText=t('welcome');
+document.getElementById('lbl-balance-title').innerText=t('balance');
+document.getElementById('lbl-balance-sub').innerText=t('balanceSub');
+document.getElementById('lbl-recv').innerText=t('recv');
+document.getElementById('lbl-pay').innerText=t('pay');
+document.getElementById('lbl-recent-txt').innerText=t('recent');
+document.getElementById('lbl-qa-bill').innerText=t('qaBill');
+document.getElementById('lbl-qa-inv').innerText=t('qaInv');
+document.getElementById('lbl-qa-parties').innerText=t('qaParties');
+document.getElementById('lbl-qa-exp').innerText=t('qaExp');
+document.getElementById('lbl-qa-rep').innerText=t('qaRep');
+document.getElementById('lbl-qa-rem').innerText=t('qaRem');
+document.getElementById('lbl-bill-title').innerText=t('billTitle');
+document.getElementById('lbl-item-lbl').innerText=t('item');
+document.getElementById('lbl-qty-lbl').innerText=t('qty');
+document.getElementById('lbl-cust-lbl').innerText=t('cust');
+document.getElementById('lbl-phone-lbl').innerText=t('phone');
+document.getElementById('lbl-amt-lbl').innerText=t('amt');
+document.getElementById('lbl-type-lbl').innerText=t('type');
+document.getElementById('opt-gave').innerText=t('typeGave');
+document.getElementById('opt-got').innerText=t('typeGot');
+document.getElementById('lbl-save-bill').innerText=t('saveBill');
+document.getElementById('lbl-inv-title').innerText=t('invTitle');
+document.getElementById('lbl-add-new').innerText=t('addNew');
+document.getElementById('add-item-title').innerText=t('addItemTitle');
+document.getElementById('lbl-photo-lbl').innerText=t('photo');
+document.getElementById('lbl-name-lbl').innerText=t('name');
+document.getElementById('lbl-unit-lbl').innerText=t('unit');
+document.getElementById('lbl-pp-lbl').innerText=t('pp');
+document.getElementById('lbl-sp-lbl').innerText=t('sp');
+document.getElementById('lbl-stock-lbl').innerText=t('stock');
+document.getElementById('lbl-low-lbl').innerText=t('low');
+document.getElementById('lbl-cancel-item').innerText=t('cancel');
+document.getElementById('lbl-parties-title').innerText=t('partiesTitle');
+document.getElementById('lbl-ledger-back').innerText=t('ledgerBack');
+document.getElementById('lbl-ledger-total').innerText=t('ledgerTotal');
+document.getElementById('lbl-rep-title').innerText=t('repTitle');
+document.getElementById('lbl-rem-title').innerText=t('remTitle');
+document.getElementById('lbl-rem-pend').innerText=t('remPend');
+document.getElementById('lbl-rem-info').innerText=t('remInfo');
+document.getElementById('lbl-exp-title').innerText=t('expTitle');
+document.getElementById('lbl-save-exp').innerText=t('saveExp');
+document.getElementById('lbl-set-title').innerText=t('setTitle');
+document.getElementById('lbl-set-name').innerText=t('setName');
+document.getElementById('lbl-set-addr').innerText=t('setAddr');
+document.getElementById('lbl-set-phone').innerText=t('setPhone');
+document.getElementById('lbl-upd-shop').innerText=t('updShop');
+document.getElementById('lbl-prem-title').innerText=t('premTitle');
+document.getElementById('lbl-go-prem').innerText=t('goPrem');
+document.getElementById('lbl-logged-in').innerText=t('loggedIn');
+document.getElementById('lbl-logout').innerText=t('logout');
+document.getElementById('lbl-nav-home').innerText=t('navHome');
+document.getElementById('lbl-nav-bill').innerText=t('navBill');
+document.getElementById('lbl-nav-inv').innerText=t('navInv');
+document.getElementById('lbl-nav-par').innerText=t('navPar');
+document.getElementById('lbl-nav-rep').innerText=t('navRep');
+document.getElementById('lbl-pay-title').innerText=t('payTitle');
+document.getElementById('lbl-cash').innerText=t('cash');
+document.getElementById('lbl-bank').innerText=t('bank');
+document.getElementById('lbl-cancel').innerText=t('cancelBtn');
+document.getElementById('lbl-otp-title').innerText=t('otpTitle');
+document.getElementById('lbl-verify').innerText=t('verify');
+document.getElementById('lbl-shop-title').innerText=t('shopTitle');
+document.getElementById('lbl-save-shop').innerText=t('saveShop');
+document.getElementById('lbl-reset-title').innerText=t('resetTitle');
+document.getElementById('lbl-back').innerText=t('back');
+}
+
+function togglePwd(id,icon){var el=document.getElementById(id);if(el.type==='password'){el.type='text';icon.innerText='🙈';}else{el.type='password';icon.innerText='👁️';}}
+function switchAuthTab(tab){
+document.getElementById('tab-login').classList.remove('active');document.getElementById('tab-register').classList.remove('active');
+document.getElementById('form-login').classList.remove('active');document.getElementById('form-register').classList.remove('active');
+if(tab==='login'){document.getElementById('tab-login').classList.add('active');document.getElementById('form-login').classList.add('active');}
+else{document.getElementById('tab-register').classList.add('active');document.getElementById('form-register').classList.add('active');}
+}
+function resetApp(){if(confirm("Delete all data?")){localStorage.clear();location.reload();}}
+function signupUser(){
+var email=document.getElementById('reg-email').value,pass=document.getElementById('reg-password').value;
+var q=document.getElementById('reg-security-q').value,a=document.getElementById('reg-security-a').value;
+if(!email||!pass||!a){alert("Fill all fields!");return;}
+var users=JSON.parse(localStorage.getItem('vyaparUsers'))||{};
+if(users[email]){alert("Email already registered!");return;}
+users[email]={pass:pass,q:q,a:a};localStorage.setItem('vyaparUsers',JSON.stringify(users));
+alert("✅ Account created!");switchAuthTab('login');
+}
+function loginUser(){
+var email=document.getElementById('login-email').value,pass=document.getElementById('login-password').value;
+var users=JSON.parse(localStorage.getItem('vyaparUsers'))||{};
+if(users[email]&&users[email].pass===pass){showOtpModal(email);}else{alert("❌ Wrong email or password!");}
+}
+function showOtpModal(email){pendingEmail=email;generatedOTP=Math.floor(1000+Math.random()*9000).toString();document.getElementById('otp-display').innerText=generatedOTP;document.getElementById('otp-input').value='';document.getElementById('otp-modal').style.display='flex';}
+function closeOtpModal(){document.getElementById('otp-modal').style.display='none';document.getElementById('login-password').value='';}
+function verifyOTP(){
+if(document.getElementById('otp-input').value===generatedOTP){
+closeOtpModal();currentUser={email:pendingEmail};
+document.getElementById('auth-screen').classList.add('hidden');
+document.getElementById('settings-email').innerText=pendingEmail;
+if(shopDetails&&shopDetails.name){document.getElementById('main-app').classList.remove('hidden');loadShopUI();saveToLocal();}
+else{document.getElementById('shop-setup-screen').classList.remove('hidden');}
+}else{alert("❌ Wrong OTP!");}
+}
+function logoutUser(){currentUser=null;location.reload();}
+function showForgotPassword(){document.getElementById('auth-screen').classList.add('hidden');document.getElementById('forgot-password-screen').classList.remove('hidden');document.getElementById('fp-step1').classList.remove('hidden');document.getElementById('fp-step2').classList.add('hidden');document.getElementById('fp-step3').classList.add('hidden');}
+function backToLogin(){document.getElementById('forgot-password-screen').classList.add('hidden');document.getElementById('auth-screen').classList.remove('hidden');}
+function checkFpEmail(){var email=document.getElementById('fp-email').value;var users=JSON.parse(localStorage.getItem('vyaparUsers'))||{};if(users[email]){fpEmailGlobal=email;document.getElementById('fp-question-display').innerText="Q: "+users[email].q;document.getElementById('fp-step1').classList.add('hidden');document.getElementById('fp-step2').classList.remove('hidden');}else{alert("Not registered!");}}
+function checkFpAnswer(){var ans=document.getElementById('fp-answer').value;var users=JSON.parse(localStorage.getItem('vyaparUsers'))||{};if(users[fpEmailGlobal].a.toLowerCase()===ans.toLowerCase()){document.getElementById('fp-step2').classList.add('hidden');document.getElementById('fp-step3').classList.remove('hidden');}else{alert("❌ Wrong!");}}
+function saveNewPassword(){var n=document.getElementById('fp-new-password').value;var users=JSON.parse(localStorage.getItem('vyaparUsers'))||{};users[fpEmailGlobal].pass=n;localStorage.setItem('vyaparUsers',JSON.stringify(users));alert("✅ Changed!");backToLogin();}
+function saveShopDetails(){var name=document.getElementById('shop-name').value,addr=document.getElementById('shop-address').value,phone=document.getElementById('shop-phone').value;if(!name||!addr||!phone){alert("Fill all!");return;}shopDetails={name:name,address:addr,phone:phone};localStorage.setItem('vyaparShop',JSON.stringify(shopDetails));document.getElementById('shop-setup-screen').classList.add('hidden');document.getElementById('main-app').classList.remove('hidden');loadShopUI();saveToLocal();}
+function updateShopDetails(){shopDetails={name:document.getElementById('settings-shop-name').value,address:document.getElementById('settings-shop-address').value,phone:document.getElementById('settings-shop-phone').value};localStorage.setItem('vyaparShop',JSON.stringify(shopDetails));alert("Updated!");loadShopUI();}
+function loadShopUI(){if(shopDetails){document.getElementById('header-shop-name').innerText=shopDetails.name;document.getElementById('settings-shop-name').value=shopDetails.name;document.getElementById('settings-shop-address').value=shopDetails.address;document.getElementById('settings-shop-phone').value=shopDetails.phone;}}function switchTab(tabName){
+var views=document.getElementsByClassName('view');
+for(var i=0;i<views.length;i++){views[i].style.display='none';}
+var av=document.getElementById('view-'+tabName);if(av)av.style.display='block';
+var navs=document.getElementsByClassName('nav-item');
+for(var j=0;j<navs.length;j++){navs[j].classList.remove('active');}
+var an=document.getElementById('nav-'+tabName);if(an)an.classList.add('active');
+if(tabName==='inventory')loadInventory();if(tabName==='new-bill')loadItemDropdown();
+if(tabName==='parties')loadParties();if(tabName==='expenses')loadExpenses();
+if(tabName==='report')loadReport();if(tabName==='reminder')loadReminder();
+}
+function updateDashboard(){
+var netBalance=0,rec=0,pay=0;
+for(var i=0;i<transactions.length;i++){var amt=parseFloat(transactions[i].amount);if(transactions[i].typeKey==="typeGaveShort"){netBalance-=amt;pay+=amt;}else{netBalance+=amt;rec+=amt;}}
+document.getElementById('net-balance-display').innerText="Rs. "+Math.abs(netBalance).toLocaleString();
+document.getElementById('receivable-display').innerText="Rs. "+rec.toLocaleString();
+document.getElementById('payable-display').innerText="Rs. "+pay.toLocaleString();
+}
+function loadTransactions(){
+var list=document.getElementById('transaction-list');if(!list)return;
+var searchEl=document.getElementById('home-search');var searchTerm=searchEl?searchEl.value.toLowerCase():'';
+list.innerHTML='';
+var filtered=transactions.filter(function(t){return t.name.toLowerCase().indexOf(searchTerm)>-1;});
+if(filtered.length===0){list.innerHTML='<div class="empty-state">📋 '+(currentLang==='ur'?'کوئی لین دین نہیں':'No transactions')+'</div>';return;}
+filtered.forEach(function(trans){
+var isGave=trans.typeKey==="typeGaveShort";var ac=isGave?'avatar-red':'avatar-green';var init=trans.name.charAt(0).toUpperCase();
+var realIndex=transactions.indexOf(trans);
+var item=document.createElement('div');item.className='transaction-item';
+item.innerHTML='<div class="t-header"><div class="t-info"><div class="t-avatar '+ac+'">'+init+'</div><div><h4>'+trans.name+'</h4><p>'+(isGave?(currentLang==='ur'?'آپ نے دیا':'You Gave'):(currentLang==='ur'?'آپ کو ملے':'You Got'))+' • '+trans.date+'</p></div></div><div class="t-amount amount-'+trans.color+'">Rs. '+trans.amount+'</div></div>';
+item.innerHTML+='<div class="t-actions"><button class="btn-small btn-wa" onclick="shareWhatsApp(\''+trans.name+'\',\''+trans.amount+'\',\''+(isGave?'Udhaar':'Payment')+'\',\''+(trans.phone||'')+'\')">📲 '+(currentLang==='ur'?'واٹس ایپ':'WhatsApp')+'</button><button class="btn-small btn-pay" onclick="printBill('+realIndex+')">🖨️ '+(currentLang==='ur'?'پرنٹ':'Print')+'</button></div>';
+list.appendChild(item);
+});
+}
+function printBill(index){
+var trans=transactions[index];if(!trans){alert("Not found!");return;}
+var shopName=shopDetails?shopDetails.name:'App';var shopAddr=shopDetails?shopDetails.address:'';var shopPhone=shopDetails?shopDetails.phone:'';
+var isGave=trans.typeKey==="typeGaveShort";var inv="INV-"+String(index+1).padStart(4,'0');
+var html='<div class="print-invoice"><h2>'+shopName+'</h2>';
+html+='<div class="shop-info">'+shopAddr+'<br>📞 '+shopPhone+'</div>';
+html+='<div class="row"><span>Invoice #:</span><span>'+inv+'</span></div>';
+html+='<div class="row"><span>Date:</span><span>'+trans.date+'</span></div>';
+html+='<div class="row"><span>Customer:</span><span>'+trans.name+'</span></div>';
+if(trans.phone)html+='<div class="row"><span>Phone:</span><span>'+trans.phone+'</span></div>';
+html+='<div class="row"><span>Type:</span><span>'+(isGave?'Udhaar':'Payment')+'</span></div>';
+html+='<div class="row total"><span>Total:</span><span>Rs. '+trans.amount+'</span></div>';
+html+='<div style="text-align:center;margin-top:20px;font-size:0.8rem;color:#94a3b8">Thank you!</div></div>';
+document.getElementById('print-area').innerHTML=html;document.getElementById('print-area').classList.remove('hidden');window.print();
+setTimeout(function(){document.getElementById('print-area').classList.add('hidden');},1000);
+}
+function handlePhotoUpload(event){var file=event.target.files[0];if(!file)return;if(file.size>500000){alert("Image too large! Under 500KB.");return;}var reader=new FileReader();reader.onload=function(e){currentPhotoData=e.target.result;document.getElementById('photo-preview-box').innerHTML='<img src="'+currentPhotoData+'">';};reader.readAsDataURL(file);}
+function loadInventory(){
+var list=document.getElementById('inventory-list');if(!list)return;
+var searchEl=document.getElementById('inventory-search');var searchTerm=searchEl?searchEl.value.toLowerCase():'';
+list.innerHTML='';
+var filtered=items.filter(function(i){return i.name.toLowerCase().indexOf(searchTerm)>-1;});
+if(filtered.length===0){list.innerHTML='<div class="empty-state">📦 '+(currentLang==='ur'?'کوئی آئٹم نہیں':'No items')+'</div>';return;}
+filtered.forEach(function(item){
+var isLow=parseFloat(item.stock)<=parseFloat(item.lowStock);var w=isLow?' ⚠️':'';var unit=item.unit||'پیکٹ';
+var photoHtml=item.photo?'<img src="'+item.photo+'" class="item-photo">':'<div class="t-avatar avatar-red">📦</div>';
+var div=document.createElement('div');div.className='inventory-item';
+div.innerHTML='<div class="t-header"><div class="t-info">'+photoHtml+'<div><h4>'+item.name+'</h4><p>'+unit+' | Rs. '+item.purchasePrice+' → Rs. '+item.price+'</p></div></div><div style="font-weight:bold;color:'+(isLow?'#ef4444':'#10b981')+'">'+item.stock+' '+unit+w+'</div></div><div class="item-actions"><button class="btn-edit" onclick="editItem('+item.id+')">✏️</button><button class="btn-delete" onclick="deleteItem('+item.id+')">🗑️</button></div>';
+list.appendChild(div);
+});
+}
+function loadItemDropdown(){var select=document.getElementById('bill-item-select');if(!select)return;select.innerHTML='<option value="">-- '+(currentLang==='ur'?'آئٹم':'Item')+' --</option>';items.forEach(function(item,index){if(item.stock>0){var unit=item.unit||'پیکٹ';var opt=document.createElement('option');opt.value=index;opt.innerHTML=item.name+' (Rs. '+item.price+'/'+unit+')';select.appendChild(opt);}});}
+function fillAmountFromItem(){var select=document.getElementById('bill-item-select');if(select.value!==""){var item=items[select.value];document.getElementById('bill-quantity').value=1;document.getElementById('bill-amount').value=item.price;}else{document.getElementById('bill-amount').value='';}}
+function updateBillAmount(){var select=document.getElementById('bill-item-select');var qty=parseFloat(document.getElementById('bill-quantity').value)||0;if(select.value!==""&&qty>0){var item=items[select.value];document.getElementById('bill-amount').value=(parseFloat(item.price)*qty).toFixed(2);}}
+function resetItemForm(){document.getElementById('edit-item-id').value='';document.getElementById('item-name').value='';document.getElementById('item-purchase-price').value='';document.getElementById('item-price').value='';document.getElementById('item-stock').value='';document.getElementById('item-low-stock').value='5';document.getElementById('item-unit').value='پیکٹ';currentPhotoData='';document.getElementById('photo-preview-box').innerHTML='<span>'+t('photoAdd')+'</span>';document.getElementById('add-item-title').innerText=t('addItemTitle');}
+function saveItem(){var id=document.getElementById('edit-item-id').value;var name=document.getElementById('item-name').value;var unit=document.getElementById('item-unit').value;var pp=document.getElementById('item-purchase-price').value;var price=document.getElementById('item-price').value;var stock=document.getElementById('item-stock').value;var lowStock=document.getElementById('item-low-stock').value||5;if(!name||!pp||!price||!stock){alert("Fill required!");return;}if(id===""){items.push({id:Date.now(),name:name,unit:unit,purchasePrice:pp,price:price,stock:stock,lowStock:lowStock,photo:currentPhotoData});}else{var idx=items.findIndex(function(i){return i.id==id;});if(idx>-1){items[idx]={id:parseInt(id),name:name,unit:unit,purchasePrice:pp,price:price,stock:stock,lowStock:lowStock,photo:currentPhotoData};}}saveToLocal();resetItemForm();switchTab('inventory');}
+function editItem(id){var item=items.find(function(i){return i.id===id;});if(item){document.getElementById('edit-item-id').value=item.id;document.getElementById('item-name').value=item.name;document.getElementById('item-unit').value=item.unit||'پیکٹ';document.getElementById('item-purchase-price').value=item.purchasePrice;document.getElementById('item-price').value=item.price;document.getElementById('item-stock').value=item.stock;document.getElementById('item-low-stock').value=item.lowStock;currentPhotoData=item.photo||'';if(item.photo){document.getElementById('photo-preview-box').innerHTML='<img src="'+item.photo+'">';}else{document.getElementById('photo-preview-box').innerHTML='<span>'+t('photoAdd')+'</span>';}switchTab('add-item');}}
+function deleteItem(id){if(confirm("Delete?")){items=items.filter(function(i){return i.id!==id;});saveToLocal();loadInventory();}}
+function saveBill(){
+var customer=document.getElementById('bill-customer').value,phone=document.getElementById('bill-phone').value;
+var amount=document.getElementById('bill-amount').value,typeValue=document.getElementById('bill-type').value;
+var itemSelect=document.getElementById('bill-item-select');var qty=parseFloat(document.getElementById('bill-quantity').value)||1;
+if(!customer||!amount){alert("Enter name and amount!");return;}
+var color=(typeValue==="gave")?"red":"green";var typeKey=(typeValue==="gave")?"typeGaveShort":"typeGotShort";
+if(itemSelect.value!==""&&typeValue==="gave"){var itemIndex=parseInt(itemSelect.value);var item=items[itemIndex];if(parseFloat(item.stock)>=qty){items[itemIndex].stock=(parseFloat(item.stock)-qty).toFixed(2);}else{alert("⚠️ Only "+item.stock+" "+item.unit+" left!");return;}}
+transactions.unshift({name:customer,phone:phone,amount:amount,typeKey:typeKey,color:color,date:new Date().toLocaleDateString()});
+document.getElementById('bill-customer').value='';document.getElementById('bill-phone').value='';document.getElementById('bill-amount').value='';document.getElementById('bill-quantity').value='1';itemSelect.value='';
+saveToLocal();switchTab('home');alert("✅ Saved!");
+}
+function shareWhatsApp(customer,amount,type,phone){var shopName=shopDetails?shopDetails.name:'App';var text=(currentLang==='ur'?'السلام علیکم ':'Hello ')+customer+(currentLang==='ur'?'، ':' , ')+shopName+(currentLang==='ur'?' کی طرف سے آپ کا بل: Rs. ':' bill: Rs. ')+amount+' ('+type+')';var url='https://wa.me/';if(phone&&phone.length>5){if(phone.startsWith('0')){phone='92'+phone.substring(1);}url+=phone+'?text='+encodeURIComponent(text);}else{url+='?text='+encodeURIComponent(text);}window.open(url,'_blank');}
+function loadParties(){var list=document.getElementById('parties-list');if(!list)return;list.innerHTML='';var parties=[];transactions.forEach(function(t){if(parties.indexOf(t.name)===-1)parties.push(t.name);});if(parties.length===0){list.innerHTML='<div class="empty-state">👥 '+(currentLang==='ur'?'کوئی پارٹی نہیں':'No parties')+'</div>';return;}parties.forEach(function(pName){var initial=pName.charAt(0).toUpperCase();var item=document.createElement('div');item.className='transaction-item';item.style.cursor='pointer';item.onclick=function(){openLedger(pName);};item.innerHTML='<div class="t-header"><div class="t-info"><div class="t-avatar avatar-red">'+initial+'</div><div><h4>'+pName+'</h4></div></div><div style="color:#e11d48;font-size:1.5rem">›</div></div>';list.appendChild(item);});}
+function openLedger(partyName){switchTab('ledger');var list=document.getElementById('ledger-list');list.innerHTML='';var total=0;var partyTrans=transactions.filter(function(t){return t.name===partyName;});partyTrans.forEach(function(trans){var amt=parseFloat(trans.amount);if(trans.typeKey==="typeGaveShort"){total-=amt;}else{total+=amt;}var isGave=trans.typeKey==="typeGaveShort";var item=document.createElement('div');item.className='transaction-item';item.innerHTML='<div class="t-header"><div class="t-info"><div class="t-avatar '+(isGave?'avatar-red':'avatar-green')+'">'+(isGave?'📤':'📥')+'</div><div><h4>'+(isGave?(currentLang==='ur'?'آپ نے دیا':'You Gave'):(currentLang==='ur'?'آپ کو ملے':'You Got'))+'</h4><p>'+trans.date+'</p></div></div><div class="t-amount amount-'+trans.color+'">Rs. '+trans.amount+'</div></div>';list.appendChild(item);});document.getElementById('ledger-total').innerText="Rs. "+Math.abs(total).toLocaleString();}
+function loadExpenses(){var list=document.getElementById('expenses-list');if(!list)return;list.innerHTML='';if(expenses.length===0){list.innerHTML='<div class="empty-state">💸 '+(currentLang==='ur'?'کوئی خرچ نہیں':'No expenses')+'</div>';return;}expenses.forEach(function(exp){var item=document.createElement('div');item.className='transaction-item';item.innerHTML='<div class="t-header"><div class="t-info"><div class="t-avatar avatar-red">💸</div><div><h4>'+exp.desc+'</h4><p>'+exp.date+'</p></div></div><div class="t-amount amount-red">- Rs. '+exp.amount+'</div></div>';list.appendChild(item);});}
+function saveExpense(){var desc=document.getElementById('expense-desc').value;var amount=document.getElementById('expense-amount').value;if(!desc||!amount){alert("Enter details!");return;}expenses.unshift({desc:desc,amount:amount,date:new Date().toLocaleDateString()});document.getElementById('expense-desc').value='';document.getElementById('expense-amount').value='';saveToLocal();alert("✅ Saved!");}
+function loadReport(){var selector=document.getElementById('month-selector');var content=document.getElementById('report-content');if(!selector||!content)return;var months=[];var now=new Date();for(var i=0;i<6;i++){var d=new Date(now.getFullYear(),now.getMonth()-i,1);var key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0');var label=d.toLocaleDateString(currentLang==='ur'?'ur-PK':'en-US',{month:'long',year:'numeric'});months.push({key:key,label:label});}if(!selectedMonth)selectedMonth=months[0].key;selector.innerHTML='';months.forEach(function(m){var btn=document.createElement('button');btn.className='month-btn'+(m.key===selectedMonth?' active':'');btn.innerText=m.label;btn.onclick=function(){selectedMonth=m.key;loadReport();};selector.appendChild(btn);});var mRec=0,mPay=0,mExp=0;transactions.forEach(function(t){var d=new Date(t.date);var key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0');if(key===selectedMonth){var amt=parseFloat(t.amount);if(t.typeKey==="typeGaveShort"){mPay+=amt;}else{mRec+=amt;}}});expenses.forEach(function(e){var d=new Date(e.date);var key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0');if(key===selectedMonth){mExp+=parseFloat(e.amount);}});var profit=mRec-mExp;content.innerHTML='';content.innerHTML+='<div class="report-card big"><p>'+(currentLang==='ur'?'💰 اس مہینے کی وصولی':'💰 Month\'s Revenue')+'</p><h3>Rs. '+mRec.toLocaleString()+'</h3></div>';content.innerHTML+='<div class="report-card"><div class="icon">📥</div><p>'+(currentLang==='ur'?'وصولیاں':'Receivable')+'</p><h3 class="val-green">Rs. '+mRec.toLocaleString()+'</h3></div>';content.innerHTML+='<div class="report-card"><div class="icon">📤</div><p>'+(currentLang==='ur'?'ادائیگیاں':'Payable')+'</p><h3 class="val-red">Rs. '+mPay.toLocaleString()+'</h3></div>';content.innerHTML+='<div class="report-card"><div class="icon">💸</div><p>'+(currentLang==='ur'?'اخراجات':'Expenses')+'</p><h3 class="val-red">Rs. '+mExp.toLocaleString()+'</h3></div>';content.innerHTML+='<div class="report-card"><div class="icon">'+(profit>=0?'📈':'📉')+'</div><p>'+(currentLang==='ur'?'منافع/نقصان':'Profit/Loss')+'</p><h3 style="color:'+(profit>=0?'#059669':'#dc2626')+'">Rs. '+Math.abs(profit).toLocaleString()+'</h3></div>';}
+function loadReminder(){var list=document.getElementById('reminder-list');var totalEl=document.getElementById('reminder-total-amount');if(!list)return;var balances={};transactions.forEach(function(t){if(!balances[t.name])balances[t.name]={amount:0,phone:t.phone||'',lastDate:t.date};var amt=parseFloat(t.amount);if(t.typeKey==="typeGaveShort"){balances[t.name].amount+=amt;}else{balances[t.name].amount-=amt;}if(t.phone)balances[t.name].phone=t.phone;balances[t.name].lastDate=t.date;});list.innerHTML='';var totalPending=0;var pendingList=[];Object.keys(balances).forEach(function(name){if(balances[name].amount>0){totalPending+=balances[name].amount;pendingList.push({name:name,amount:balances[name].amount,phone:balances[name].phone,date:balances[name].lastDate});}});pendingList.sort(function(a,b){return b.amount-a.amount;});totalEl.innerText="Rs. "+totalPending.toLocaleString();if(pendingList.length===0){list.innerHTML='<div class="empty-state">🎉 '+(currentLang==='ur'?'سب کا حساب صاف ہے!':'All clear!')+'</div>';return;}pendingList.forEach(function(p){var div=document.createElement('div');div.className='reminder-item';div.innerHTML='<div class="top"><span class="name">👤 '+p.name+'</span><span class="amount">Rs. '+p.amount.toLocaleString()+'</span></div><div class="info">'+(currentLang==='ur'?'آخری لین دین':'Last')+': '+p.date+'</div><div class="t-actions"><button class="btn-small btn-wa" onclick="shareWhatsApp(\''+p.name+'\',\''+p.amount+'\',\'Udhaar\',\''+p.phone+'\')">📲 '+(currentLang==='ur'?'یاد دلائیں':'Remind')+'</button></div>';list.appendChild(div);});}
+function openPaymentModal(){var phoneDisplay=document.getElementById('modal-shop-phone');if(shopDetails&&shopDetails.phone){phoneDisplay.innerText=shopDetails.phone;}else{phoneDisplay.innerText="Set in Settings";}document.getElementById('payment-modal').style.display='flex';}
+function closeModal(){document.getElementById('payment-modal').style.display='none';}
+function processPayment(method){closeModal();if(method==='Cash'){var amount=prompt((currentLang==='ur'?'💵 نقد رقم:':'💵 Cash amount:')+" Rs.");if(!amount||isNaN(amount)||parseFloat(amount)<=0){return;}var customer=prompt((currentLang==='ur'?'گاہک کا نام:':'Customer name:'))||(currentLang==='ur'?'نقد گاہک':'Walk-in');transactions.unshift({name:customer,phone:"",amount:amount,typeKey:"typeGotShort",color:"green",date:new Date().toLocaleDateString()});saveToLocal();alert("✅ Rs. "+amount+" Saved!");}else if(method==='Bank'){alert("🏦 Bank Transfer");}else{alert("✅ "+method+" request sent!");}}
+function saveToLocal(){localStorage.setItem('vyaparTransactions',JSON.stringify(transactions));localStorage.setItem('vyaparItems',JSON.stringify(items));localStorage.setItem('vyaparExpenses',JSON.stringify(expenses));updateDashboard();loadTransactions();loadInventory();loadItemDropdown();loadParties();loadExpenses();}
+applyLanguage();
+saveToLocal();
+</script>
+</body>
+</html>
